@@ -19,6 +19,9 @@ export class CustomValidationPipe implements PipeTransform<any> {
     if (type === 'query' && value.query) {
       throw new BadRequestException();
     }
+    if (type === 'param') {
+      return value;
+    }
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {

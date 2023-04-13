@@ -7,12 +7,11 @@ import {
   ParseIntPipe,
   Post,
   Query,
-  ValidationPipe,
 } from '@nestjs/common';
 import { DishesService } from './dishes.service';
 import { GetDishByNameDto } from './dto/GetDishByNameDto';
 import { Dish } from './interfaces/dish.interface';
-
+import _ = require('lodash');
 @Controller('dishes')
 export class DishesController {
   constructor(private readonly dishesService: DishesService) {}
@@ -26,8 +25,8 @@ export class DishesController {
     return this.dishesService.getDishByID(id);
   }
 
-  @Get('get-dish-by-name/name')
-  findByName(@Param('name', ValidationPipe) name: string): Dish {
+  @Get('get-dish-by-name/:name')
+  findByName(@Param('name') name: string): Dish {
     return this.dishesService.getDishByName(name);
   }
 
@@ -45,7 +44,7 @@ export class DishesController {
   }
 
   @Delete('delete-dish-by-name/:name')
-  deleteByName(@Param('name', ValidationPipe) name: string): number {
+  deleteByName(@Param('name') name: string): number {
     return this.dishesService.deleteDishByName(name);
   }
 }

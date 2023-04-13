@@ -38,10 +38,12 @@ export class DishesService {
   }
 
   getDishByName(name: string): Dish {
-    const dish = Array.from(this.dishes.entries()).find(
-      ([key, value]) => value.name === name,
-    )[1];
-    if (!dish) throw new NotFoundException();
+    const dish = Array.from(this.dishes.values()).find(
+      (dish) => dish.name === name,
+    );
+    if (!dish) {
+      throw new NotFoundException();
+    }
     return dish;
   }
 
@@ -57,10 +59,9 @@ export class DishesService {
   }
 
   deleteDishByName(name: string): number {
-    const idToDelete = Array.from(this.dishes.entries()).find(
-      ([key, value]) => value.name === name,
-    )[0];
-    if (!this.dishes.delete(idToDelete)) throw new NotFoundException();
+    const dishToDelete = this.getDishByName(name);
+    const idToDelete = dishToDelete.id;
+    this.dishes.delete(idToDelete);
     return idToDelete;
   }
 
@@ -90,7 +91,7 @@ export class DishesService {
     const mappedDish: Dish[] = data.map((dish): Dish => {
       return {
         name: dish.name,
-        id: 1,
+        id: this.nextID,
         cal: dish.calories,
         size: dish.serving_size_g,
         sodium: dish.sodium_mg,
