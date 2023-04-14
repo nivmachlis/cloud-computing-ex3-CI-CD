@@ -1,21 +1,18 @@
-import {
-  BadGatewayException,
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  MethodNotAllowedException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, lastValueFrom, map, tap } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
-import { GetDishByNameDto } from './dto/GetDishByNameDto';
 import { CreateDishDto } from './dto/CreateDishDto';
 import { Dish } from './interfaces/dish.interface';
-import { error } from 'console';
+import {
+  DishNotExistsInNinjaApi,
+  ObjectNotFoundException,
+  NinjaApiException,
+  ObjectAlreadyExistsException,
+} from 'src/exception/custom-exceptions/expection-types';
+import { MealsService } from 'src/meals/meals.service';
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class DishesService {
   headers: object;
   ninjaUrl: string;
@@ -42,36 +39,36 @@ export class DishesService {
       (dish) => dish.name === name,
     );
     if (!dish) {
-      throw new NotFoundException();
+      throw new ObjectNotFoundException();
     }
     return dish;
   }
 
   getDishByID(id: number): Dish {
     const dish = this.dishes.get(id);
-    if (!dish) throw new NotFoundException();
+    if (!dish) throw new ObjectNotFoundException();
     return dish;
   }
 
   deleteDishByID(id: number): number {
-    if (!this.dishes.delete(id)) throw new NotFoundException();
+    if (!this.dishes.delete(id)) throw new ObjectNotFoundException();
     return id;
   }
 
   deleteDishByName(name: string): number {
     const dishToDelete = this.getDishByName(name);
-    const idToDelete = dishToDelete.id;
+    const idToDelete = dishToDelete.ID;
     this.dishes.delete(idToDelete);
     return idToDelete;
   }
 
-  async create(getDishByNameDto: GetDishByNameDto): Promise<number> {
+  async create(getDishByNameDto: CreateDishDto): Promise<number> {
     if (
       Array.from(this.dishes.values()).some(
         (value) => value.name === getDishByNameDto.name,
       )
     ) {
-      throw new ConflictException();
+      throw new ObjectAlreadyExistsException();
     }
 
     const { data, status } = await firstValueFrom(
@@ -79,19 +76,19 @@ export class DishesService {
         headers: this.headers,
       }),
     ).catch(() => {
-      throw new BadGatewayException();
+      throw new NinjaApiException();
     });
 
     if (data.length === 0) {
-      throw new MethodNotAllowedException();
+      throw new DishNotExistsInNinjaApi();
     }
     if (status !== 200) {
-      throw new BadGatewayException();
+      throw new NinjaApiException();
     }
     const mappedDish: Dish[] = data.map((dish): Dish => {
       return {
         name: dish.name,
-        id: this.nextID,
+        ID: this.nextID,
         cal: dish.calories,
         size: dish.serving_size_g,
         sodium: dish.sodium_mg,
@@ -101,7 +98,7 @@ export class DishesService {
     const finalDish: Dish = mappedDish.reduce((accumulator, currentDish) => {
       return {
         name: accumulator.name + ' and ' + currentDish.name,
-        id: this.nextID,
+        ID: this.nextID,
         cal: accumulator.cal + currentDish.cal,
         size: accumulator.size + currentDish.size,
         sodium: accumulator.sodium + currentDish.sodium,
@@ -111,6 +108,6 @@ export class DishesService {
 
     this.dishes.set(this.nextID, finalDish);
     this.nextID++;
-    return finalDish.id;
+    return finalDish.ID;
   }
 }

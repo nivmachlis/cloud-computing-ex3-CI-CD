@@ -1,8 +1,10 @@
-export interface Dish {
+export interface Meal {
   name: string;
   ID: number;
+  appetizer: number;
+  main: number;
+  dessert: number;
   cal: number;
-  size: number;
   sodium: number;
   sugar: number;
 }

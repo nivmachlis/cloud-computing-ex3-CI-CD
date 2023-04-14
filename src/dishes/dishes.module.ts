@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { DishesController } from 'src/dishes/dishes.controller';
 import { DishesService } from './dishes.service';
 
@@ -6,6 +6,6 @@ import { DishesService } from './dishes.service';
   imports: [],
   controllers: [DishesController],
   providers: [DishesService],
-  exports: [],
+  exports: [DishesService],
 })
 export class DisheshModule {}
