@@ -7,13 +7,15 @@ import {
   ObjectAlreadyExistsException,
   ObjectNotFoundException,
 } from '../exception/custom-exceptions/expection-types';
+import { OnEvent } from '@nestjs/event-emitter';
+import { Dish } from 'src/dishes/interfaces/dish.interface';
+import { EVENT } from 'src/events/events';
 @Injectable()
 export class MealsService {
   meals: Map<number, Meal> = new Map();
   private nextID: number = 1;
   constructor(private readonly dishService: DishesService) {}
   createMeal(createMealDto: CreateMealDto) {
-    let appetizer, main, dessert;
     if (
       Array.from(this.meals.values()).some(
         (value) => value.name === createMealDto.name,
@@ -81,5 +83,37 @@ export class MealsService {
       sugar: appetizer.sugar + main.sugar + dessert.sugar,
     };
     return meal;
+  }
+  private calcNutrionValues(meal: Meal) {
+    const appetizer = this.dishService.getDishForEventHandlerById(
+      meal.appetizer,
+    );
+    const main = this.dishService.getDishForEventHandlerById(meal.main);
+    const dessert = this.dishService.getDishForEventHandlerById(meal.dessert);
+    meal.cal = (appetizer?.cal || 0) + (dessert?.cal || 0) + (main?.cal || 0);
+    meal.sodium =
+      (appetizer?.sodium || 0) + (dessert?.sodium || 0) + (main?.sodium || 0);
+    meal.sugar =
+      (appetizer?.sugar || 0) + (dessert?.sugar || 0) + (main?.sugar || 0);
+  }
+
+  @OnEvent(EVENT.DISH_DELETED)
+  async handleDishDeleted(deletedDish: Dish) {
+    // handle and process "OrderCreatedEvent" event
+    this.meals.forEach((value) => {
+      console.log(value);
+      if (value.appetizer === deletedDish.ID) {
+        value.appetizer = null;
+        this.calcNutrionValues(value);
+      }
+      if (value.main === deletedDish.ID) {
+        value.main = null;
+        this.calcNutrionValues(value);
+      }
+      if (value.dessert === deletedDish.ID) {
+        value.dessert = null;
+        this.calcNutrionValues(value);
+      }
+    });
   }
 }

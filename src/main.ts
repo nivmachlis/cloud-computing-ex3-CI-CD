@@ -8,9 +8,21 @@ import { DishNotExistsInNinjaApiFilter } from './exception/filters/dish-not-exis
 import { NinjaApiFilter } from './exception/filters/ninja-api.filter';
 import { ObjectNotFoundFilter } from './exception/filters/object-not-found.filter';
 import { DishNotFoundForMealFilter } from './exception/filters/dish-not-found-for-meal.filter';
+import {
+  SwaggerModule,
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+} from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const config = new DocumentBuilder()
+    .setTitle('Cloud Computing and SE Ex1')
+    .setDescription('API Description')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
   app.useGlobalPipes(new CustomValidationPipe());
   app.useGlobalFilters(
     //pipes filters

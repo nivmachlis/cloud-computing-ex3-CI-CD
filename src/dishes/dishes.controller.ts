@@ -17,7 +17,7 @@ export class DishesController {
   constructor(private readonly dishesService: DishesService) {}
 
   @Get()
-  findAll(): Record<number, Dish> {
+  findAll(): Record<string, Dish> {
     return this.dishesService.getAllDishes();
   }
   @Get(':idOrName')
@@ -40,13 +40,13 @@ export class DishesController {
   }
 
   @Delete(':idOrName')
-  deleteByIdOrName(@Param('idOrName') idOrName: string): number {
+  async deleteByIdOrName(@Param('idOrName') idOrName: string): Promise<number> {
     if (!_.isNaN(_.toNumber(idOrName))) {
       const id = _.toNumber(idOrName);
       return this.dishesService.deleteDishByID(id);
     } else {
       const name = idOrName;
-      return this.dishesService.deleteDishByName(name);
+      return await this.dishesService.deleteDishByName(name);
     }
   }
   @Delete()

@@ -3,18 +3,18 @@ import { DisheshModule } from './dishes/dishes.module';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { MealsModule } from './meals/meals.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+
 @Module({
   imports: [
     DisheshModule,
+    MealsModule,
+    EventEmitterModule.forRoot({ global: true }),
     ConfigModule.forRoot({ isGlobal: true }),
     {
       module: HttpModule,
       global: true,
     },
-    MealsModule,
   ],
-  controllers: [],
-  providers: [],
-  exports: [],
 })
 export class AppModule {}

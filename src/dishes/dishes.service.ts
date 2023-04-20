@@ -1,6 +1,6 @@
 import { Injectable, Scope } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom, lastValueFrom, map, tap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import { CreateDishDto } from './dto/CreateDishDto';
 import { Dish } from './interfaces/dish.interface';
@@ -10,7 +10,9 @@ import {
   NinjaApiException,
   ObjectAlreadyExistsException,
 } from 'src/exception/custom-exceptions/expection-types';
-import { MealsService } from 'src/meals/meals.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { promises } from 'dns';
+import { EVENT } from 'src/events/events';
 
 @Injectable({ scope: Scope.DEFAULT })
 export class DishesService {
@@ -22,6 +24,7 @@ export class DishesService {
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
   ) {
     const headers = {
       'X-Api-Key': this.configService.get('NINJA_API_KEY'),
@@ -50,15 +53,19 @@ export class DishesService {
     return dish;
   }
 
-  deleteDishByID(id: number): number {
-    if (!this.dishes.delete(id)) throw new ObjectNotFoundException();
+  async deleteDishByID(id: number): Promise<number> {
+    const dishToDelete: Dish = this.getDishByID(id);
+    this.dishes.delete(id);
+    await this.eventEmitter.emitAsync(EVENT.DISH_DELETED, dishToDelete);
     return id;
   }
 
-  deleteDishByName(name: string): number {
+  async deleteDishByName(name: string): Promise<number> {
     const dishToDelete = this.getDishByName(name);
     const idToDelete = dishToDelete.ID;
     this.dishes.delete(idToDelete);
+    await this.eventEmitter.emitAsync(EVENT.DISH_DELETED, dishToDelete);
+
     return idToDelete;
   }
 
@@ -109,5 +116,11 @@ export class DishesService {
     this.dishes.set(this.nextID, finalDish);
     this.nextID++;
     return finalDish.ID;
+  }
+
+  getDishForEventHandlerById(id: number): Dish {
+    const dish = this.dishes.get(id);
+    if (!dish) return null;
+    return dish;
   }
 }
