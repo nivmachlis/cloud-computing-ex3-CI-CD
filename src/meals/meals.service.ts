@@ -101,7 +101,6 @@ export class MealsService {
   async handleDishDeleted(deletedDish: Dish) {
     // handle and process "OrderCreatedEvent" event
     this.meals.forEach((value) => {
-      console.log(value);
       if (value.appetizer === deletedDish.ID) {
         value.appetizer = null;
         this.calcNutrionValues(value);

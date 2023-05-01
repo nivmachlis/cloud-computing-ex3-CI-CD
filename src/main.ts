@@ -8,11 +8,7 @@ import { DishNotExistsInNinjaApiFilter } from './exception/filters/dish-not-exis
 import { NinjaApiFilter } from './exception/filters/ninja-api.filter';
 import { ObjectNotFoundFilter } from './exception/filters/object-not-found.filter';
 import { DishNotFoundForMealFilter } from './exception/filters/dish-not-found-for-meal.filter';
-import {
-  SwaggerModule,
-  DocumentBuilder,
-  SwaggerDocumentOptions,
-} from '@nestjs/swagger';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

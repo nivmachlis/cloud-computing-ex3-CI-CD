@@ -13,6 +13,7 @@ import {
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { promises } from 'dns';
 import { EVENT } from 'src/events/events';
+import { head } from 'lodash';
 
 @Injectable({ scope: Scope.DEFAULT })
 export class DishesService {
@@ -82,7 +83,7 @@ export class DishesService {
       this.httpService.get(`${this.ninjaUrl}?query=${getDishByNameDto.name}`, {
         headers: this.headers,
       }),
-    ).catch(() => {
+    ).catch((error) => {
       throw new NinjaApiException();
     });
 

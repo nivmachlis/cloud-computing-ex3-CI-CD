@@ -9,8 +9,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
   imports: [
     DisheshModule,
     MealsModule,
-    EventEmitterModule.forRoot({ global: true }),
     ConfigModule.forRoot({ isGlobal: true }),
+    EventEmitterModule.forRoot({ global: true }),
     {
       module: HttpModule,
       global: true,

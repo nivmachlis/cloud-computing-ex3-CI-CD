@@ -14,7 +14,6 @@ import { CreateMealDto } from './dto/create-meal.dto';
 import { MealsService } from './meals.service';
 import { Meal } from './interfaces/meal.interface';
 import _ = require('lodash');
-import { query } from 'express';
 
 @Controller('meals')
 export class MealsController {
