@@ -64,7 +64,7 @@ jobs:
         env:
           NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
         run: |
-          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_services > test_server_log.txt
+          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_services > test_server_log.txt 2>&1 &
           sleep 5
           docker ps
       - name: Log Docker run result
@@ -124,7 +124,7 @@ jobs:
         env:
           NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
         run: |
-          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_service > query_server_log.txt
+          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_service > query_server_log.txt 2>&1 &
           sleep 5
           docker ps
       - name: Install requirements
