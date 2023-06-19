@@ -4,12 +4,16 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 import { MealsModule } from './meals/meals.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { config } from './configuration';
 
 @Module({
   imports: [
     DisheshModule,
     MealsModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [config],
+    }),
     EventEmitterModule.forRoot({ global: true }),
     {
       module: HttpModule,

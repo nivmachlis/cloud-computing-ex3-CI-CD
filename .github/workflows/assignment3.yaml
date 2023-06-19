@@ -1,0 +1,59 @@
+name: assignment3
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build -t dish_meal_services .
+      - name: Save Docker image
+        run: docker save dish_meal_services | gzip > dish_meal_services.tar.gz
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dish_meal_services
+          path: dish_meal_services.tar.gz
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Docker image from artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dish_meal_services
+      - name: Load Docker image
+        run: docker load < dish_meal_services.tar.gz
+      - name: Run Docker iamge
+          env:
+            NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
+        run: docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services dish_meal_container
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run tests
+        run: pytest tests/assn3_tests.py
+
+  # query:
+  #   needs: test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Download Docker image from artifact
+  #     uses: actions/download-artifact@v2
+  #     with:
+  #       name: my_service_image
+  #   - name: Load Docker image
+  #     run: docker load < my_service_image.tar.gz
+  #   - name: Issue queries and record results
+  #     run: ./run_queries.sh > results.txt # assuming you have a script that runs queries and outputs to stdout
+  #   - name: Upload results
+  #     uses: actions/upload-artifact@v2
+  #     with:
+  #       name: Query results
+  #       path: results.txt
