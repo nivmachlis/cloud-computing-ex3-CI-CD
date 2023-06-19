@@ -31,8 +31,8 @@ jobs:
       - name: Load Docker image
         run: docker load < dish_meal_services.tar.gz
       - name: Run Docker iamge
-          env:
-            NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
+        env:
+          NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
         run: docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services dish_meal_container
       - name: Install requirements
         run: pip install -r requirements.txt
