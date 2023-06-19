@@ -101,7 +101,7 @@ jobs:
       - name: Upload dish meal service logs
         uses: actions/upload-artifact@v2
         with:
-          name: server_logs/test_server_log.txt
+          name: test_server_log.txt
           path: test_server_log.txt
       - name: assert tests
         run: |
@@ -146,5 +146,5 @@ jobs:
       - name: Upload dish meal service logs
         uses: actions/upload-artifact@v2
         with:
-          name: server_logs/test_server_log.txt
+          name: query_server_log.txt
           path: query_server_log.txt
