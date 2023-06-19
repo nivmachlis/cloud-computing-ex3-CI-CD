@@ -23,20 +23,24 @@ jobs:
             echo "Image successfully built" >> log.txt
           else
             echo "Image not able to be built" >> log.txt
-            exit 1
           fi
       - name: Save docker image to gzip
         run: docker save dish_meal_services | gzip > dish_meal_services.tar.gz
-      - name: Upload Docker image as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: dish_meal_services
-          path: dish_meal_services.tar.gz
       - name: Upload log file to artifact
         uses: actions/upload-artifact@v2
         with:
           name: log.txt
           path: log.txt
+      - name: validate docker built
+        run: |
+          if [[ "${{ steps.build_docker.outcome }}" == "failure" ]]; then
+            exit 1
+          fi
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: dish_meal_services
+          path: dish_meal_services.tar.gz
 
   test:
     needs: build
