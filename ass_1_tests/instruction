@@ -1,0 +1,5 @@
+1. cd Downloads/submissions 
+2. unzip <folder-zip> -d <folder>
+3. cd <folder>
+4. docker build .
+5. docker run -p 8000:<docker-port> -d <iamge-id>
