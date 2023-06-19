@@ -15,6 +15,7 @@ jobs:
           echo Bar Nir and Niv Machlis >> log.txt
       - name: Build Docker image
         id: build_docker
+        continue-on-error: true
         run: docker build -t dish_meal_services .
       - name: Log Docker build result
         run: |
@@ -22,6 +23,7 @@ jobs:
             echo "Image successfully built" >> log.txt
           else
             echo "Image not able to be built" >> log.txt
+            exit 1
           fi
       - name: Save docker image to gzip
         run: docker save dish_meal_services | gzip > dish_meal_services.tar.gz
