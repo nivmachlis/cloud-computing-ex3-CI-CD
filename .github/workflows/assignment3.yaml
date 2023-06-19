@@ -36,6 +36,8 @@ jobs:
         run: |
           docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services
           docker ps
+      - name: Wait for docker container
+        run: sleep 5
       - name: Install requirements
         run: pip install -r requirements.txt
       - name: Run tests
@@ -44,21 +46,34 @@ jobs:
           docker ps
           pytest tests/assn3_tests.py
 
-  # query:
-  #   needs: test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Download Docker image from artifact
-  #     uses: actions/download-artifact@v2
-  #     with:
-  #       name: my_service_image
-  #   - name: Load Docker image
-  #     run: docker load < my_service_image.tar.gz
-  #   - name: Issue queries and record results
-  #     run: ./run_queries.sh > results.txt # assuming you have a script that runs queries and outputs to stdout
-  #   - name: Upload results
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: Query results
-  #       path: results.txt
+  query:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download Docker image from artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dish_meal_services
+      - name: Load Docker image
+        run: docker load < dish_meal_services.tar.gz
+      - name: Run Docker iamge
+        env:
+          NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
+        run: |
+          docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services
+          docker ps
+      - name: Wait for docker container
+        run: sleep 5
+      - name: Install requirements
+        run: pip install -r requirements.txt
+      - name: Run job
+        run: |
+          sleep 5
+          docker ps
+          python .\jobProcess.py
+      - name: Upload response.txt
+        uses: actions/upload-artifact@v2
+        with:
+          name: response.txt
+          path: .\response.txt
