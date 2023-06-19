@@ -132,3 +132,8 @@ jobs:
         with:
           name: response.txt
           path: ./response.txt
+      - name: Upload query_log.txt to artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: query_log.txt
+          path: query_log.txt
