@@ -38,7 +38,7 @@ async function bootstrap() {
     //custom filters
   );
   app.use(jsonMiddleware);
-  await app.listen(8000);
+  await app.listen(8000, '0.0.0.0');
 }
 
 bootstrap();

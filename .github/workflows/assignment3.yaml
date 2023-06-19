@@ -39,6 +39,7 @@ jobs:
       - name: Run tests
         run: |
           sleep 5
+          docker ps
           pytest tests/assn3_tests.py
 
   # query:
