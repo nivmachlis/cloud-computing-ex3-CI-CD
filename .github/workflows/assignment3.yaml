@@ -64,7 +64,7 @@ jobs:
         env:
           NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
         run: |
-          docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services
+          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_services > test_server_log.txt
           sleep 5
           docker ps
       - name: Log Docker run result
@@ -98,6 +98,11 @@ jobs:
         with:
           name: assn3_test_results.txt
           path: assn3_test_results.txt
+      - name: Upload dish meal service logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: server_logs/test_server_log.txt
+          path: test_server_log.txt
       - name: assert tests
         run: |
           if [[ "${{ steps.run_tests.outcome }}" == "failure" ]]; then
@@ -119,7 +124,7 @@ jobs:
         env:
           NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
         run: |
-          docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services
+          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_service > query_server_log.txt
           sleep 5
           docker ps
       - name: Install requirements
@@ -137,3 +142,9 @@ jobs:
         with:
           name: query_log.txt
           path: query_log.txt
+
+      - name: Upload dish meal service logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: server_logs/test_server_log.txt
+          path: query_server_log.txt
