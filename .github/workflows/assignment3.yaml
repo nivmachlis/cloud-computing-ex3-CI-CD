@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
+
       - uses: actions/checkout@v2
       - name: Add name and date to log file
         run: |
@@ -46,6 +49,9 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     steps:
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -117,6 +123,9 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     steps:
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
