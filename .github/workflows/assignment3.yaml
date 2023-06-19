@@ -72,7 +72,7 @@ jobs:
       - name: Run tests
         id: run_tests
         run: |
-          pytest tests/assn3_tests.py
+          pytest -v tests/assn3_tests.py > assn3_test_results.txt
       - name: Log tests result
         run: |
           if [[ "${{ steps.run_tests.outcome }}" == "success" ]]; then
@@ -85,6 +85,11 @@ jobs:
         with:
           name: log.txt
           path: log.txt
+      - name: Upload tests log file to artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: assn3_test_results.txt
+          path: assn3_test_results.txt
 
   query:
     needs: build
