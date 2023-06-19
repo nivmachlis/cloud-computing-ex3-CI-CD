@@ -15,7 +15,6 @@ jobs:
           echo Bar Nir and Niv Machlis >> log.txt
       - name: Build Docker image
         id: build_docker
-        continue-on-error: true
         run: docker build -t dish_meal_services .
       - name: Log Docker build result
         run: |
