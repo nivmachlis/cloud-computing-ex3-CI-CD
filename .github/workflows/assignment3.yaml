@@ -62,7 +62,7 @@ jobs:
           docker ps
       - name: Log Docker run result
         run: |
-          if [[ "$(docker ps | wc -l)" -gt 1]]; then
+          if [[ "$(docker ps | wc -l)" -gt 1 ]]; then
             echo "Container up and running" >> log.txt
           else
             echo "Container failed to run" >> log.txt
