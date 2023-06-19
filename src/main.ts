@@ -9,8 +9,9 @@ import { NinjaApiFilter } from './exception/filters/ninja-api.filter';
 import { ObjectNotFoundFilter } from './exception/filters/object-not-found.filter';
 import { DishNotFoundForMealFilter } from './exception/filters/dish-not-found-for-meal.filter';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { jsonMiddleware } from "./middleware/json-only.middleware'";
+import { jsonMiddleware } from './middleware/json-only.middleware';
 import { JsonParseExceptionFilter } from './exception/filters/json-parse-filter';
+import { logger } from './middleware/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,6 +39,7 @@ async function bootstrap() {
     //custom filters
   );
   app.use(jsonMiddleware);
+  app.use(logger);
   await app.listen(8000, '0.0.0.0');
 }
 

@@ -49,7 +49,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.8
       - uses: actions/checkout@v2
       - name: Download Docker image from artifact
         uses: actions/download-artifact@v2
@@ -62,7 +62,6 @@ jobs:
       - name: Load Docker image from gzip
         run: |
           docker load < dish_meal_services.tar.gz
-          cat log.txt
       - name: Run Docker image
         id: run_docker
         env:
@@ -79,7 +78,7 @@ jobs:
             echo "Container failed to run" >> log.txt
           fi
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: pip3 install -r requirements.txt
       - name: Run tests
         id: run_tests
         continue-on-error: true
@@ -105,7 +104,7 @@ jobs:
       - name: Upload dish meal service logs
         uses: actions/upload-artifact@v2
         with:
-          name: test_server_log.txt
+          name: additional_logs_test_server_log.txt
           path: test_server_log.txt
       - name: assert tests
         run: |
@@ -120,7 +119,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.8
       - uses: actions/checkout@v2
       - name: Download Docker image from artifact
         uses: actions/download-artifact@v2
@@ -132,14 +131,14 @@ jobs:
         env:
           NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
         run: |
-          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_service > query_server_log.txt 2>&1 &
+          docker run -e NINJA_API_KEY -p 8000:8000 dish_meal_services > query_server_log.txt 2>&1 &
           sleep 5
           docker ps
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: pip3 install -r requirements.txt
       - name: Run Query
         run: |
-          python ./jobProcess.py > query_log.txt
+          python3 ./jobProcess.py > query_log.txt 2>&1
       - name: Upload response.txt to artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -148,11 +147,11 @@ jobs:
       - name: Upload query_log.txt to artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: query_log.txt
+          name: additional_logs_query_log.txt
           path: query_log.txt
 
       - name: Upload dish meal service logs
         uses: actions/upload-artifact@v2
         with:
-          name: query_server_log.txt
+          name: additional_logs_query_server_log.txt
           path: query_server_log.txt
