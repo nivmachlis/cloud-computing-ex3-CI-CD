@@ -26,7 +26,8 @@ for dish in query_lines:
         else:
             print(f"post failed beacuse {response_post.status_code}")
             raise Exception()        
-    except:
+    except Exception as e:
+        print(f"exceptin: {e}")
         response_lines.append(f"Error: Failed to retrieve data for {dish}")
         
 
