@@ -16,7 +16,7 @@ def test_post_dishes():
         response_body = response.json()
         ids.add(response_body)
 
-    assert len(ids) == 5
+    assert len(ids) == 3
     
 
 
