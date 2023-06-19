@@ -36,6 +36,7 @@ jobs:
           if [[ "${{ steps.build_docker.outcome }}" == "failure" ]]; then
             exit 1
           fi
+          cat log.txt
       - name: Upload Docker image as artifact
         uses: actions/upload-artifact@v2
         with:
@@ -56,7 +57,9 @@ jobs:
         with:
           name: log.txt
       - name: Load Docker image from gzip
-        run: docker load < dish_meal_services.tar.gz
+        run: |
+          docker load < dish_meal_services.tar.gz
+          cat log.txt
       - name: Run Docker image
         id: run_docker
         env:
@@ -85,6 +88,7 @@ jobs:
           else
             echo "Tests failed" >> log.txt
           fi
+          cat log.txt
       - name: Upload log file to artifact
         uses: actions/upload-artifact@v2
         with:
@@ -118,7 +122,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run Query
         run: |
-          python ./jobProcess.py
+          python ./jobProcess.py > query_log.txt
       - name: Upload response.txt to artifacts
         uses: actions/upload-artifact@v2
         with:
