@@ -29,3 +29,9 @@ export class DishNotExistsInNinjaApi extends HttpException {
     super('Dish Not exists in ninja api', HttpStatus.UNPROCESSABLE_ENTITY);
   }
 }
+
+export class JsonParseException extends HttpException {
+  constructor() {
+    super('JsonParseException', 415);
+  }
+}
