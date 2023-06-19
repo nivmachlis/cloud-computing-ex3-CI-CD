@@ -36,7 +36,6 @@ jobs:
           if [[ "${{ steps.build_docker.outcome }}" == "failure" ]]; then
             exit 1
           fi
-          cat log.txt
       - name: Upload Docker image as artifact
         uses: actions/upload-artifact@v2
         with:
@@ -79,6 +78,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run tests
         id: run_tests
+        continue-on-error: true
         run: |
           pytest -v tests/assn3_tests.py > assn3_test_results.txt
       - name: Log tests result
@@ -88,7 +88,6 @@ jobs:
           else
             echo "Tests failed" >> log.txt
           fi
-          cat log.txt
       - name: Upload log file to artifact
         uses: actions/upload-artifact@v2
         with:
@@ -99,6 +98,11 @@ jobs:
         with:
           name: assn3_test_results.txt
           path: assn3_test_results.txt
+      - name: assert tests
+        run: |
+          if [[ "${{ steps.run_tests.outcome }}" == "failure" ]]; then
+            exit 1
+          fi
 
   query:
     needs: build
