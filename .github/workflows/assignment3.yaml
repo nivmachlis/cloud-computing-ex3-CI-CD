@@ -33,7 +33,9 @@ jobs:
       - name: Run Docker iamge
         env:
           NINJA_API_KEY: ${{secrets.NINJA_API_KEY}}
-        run: docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services dish_meal_container
+        run: |
+          docker run -e NINJA_API_KEY -p 8000:8000 -d dish_meal_services
+          docker ps
       - name: Install requirements
         run: pip install -r requirements.txt
       - name: Run tests
