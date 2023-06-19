@@ -79,8 +79,8 @@ def test_get_all_meals():
     assert response.status_code == 200
     
     assert len(data) == 1
-
-    assert 400 <= data[0]["calories"] <= 500
+    
+    assert 400 <= data.popitem()[1]["cal"] <= 500
 
 
     
@@ -107,7 +107,7 @@ def test_post_existing_meal():
 def get_meal_ID_by_name(name):
     response = requests.get(f"http://localhost:8000/dishes/{name}")
     try:
-        meal_id = response_orange.json()
+        meal_id = response.json()["ID"]
         return meal_id
     except:
         assert False,f"No {name} in DB"
