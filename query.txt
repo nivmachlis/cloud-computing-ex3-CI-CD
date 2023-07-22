@@ -1,4 +1,3 @@
-corn
-rice
-avocado
-carrot
+apple
+spaghetti
+orange
